@@ -10,8 +10,17 @@ KilimoForum is an online platform designed to connect customers, farmers, and se
 
 Follow these steps to set up and run the KilimoForum project on your local machine.
 
+User Credentials
+Farmer : username: farmer, password: MUMUMPEPE
+Seller: username: seller, password: MUMUMPEPE
+Customer: username: mumumpepe, password: MUMUMPEPE
+Administrator: username: secretadminmumumpepe, password: MUMUMPEPE
+
+
 ### 1. Clone the Repository
 
 ```bash
 git clone https://github.com/mumumpepe/KilimoForum.git
 cd KilimoForum
+
+
