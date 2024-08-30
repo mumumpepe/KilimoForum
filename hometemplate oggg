@@ -1,0 +1,226 @@
+<?php
+//session control
+session_start();
+
+include("edited_home.php");
+
+?>
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+
+    <style>
+        *{
+            box-sizing: border-box;
+            padding: 0;
+            margin: 0;
+        }
+        h1{
+            text-align: center;
+        }
+        .main-body{
+            border: 2.5px solid black;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+        }
+
+        .left-nav{
+            width: 10vw;
+            height: 60vh;
+            border: 1px solid black;
+            margin-top: 17.5vh;
+        
+        }
+
+        .right-nav{
+            width: 10vw;
+            height: 60vh;
+            border: 1px solid black;
+            margin-top: 17.5vh;   
+            float: right;
+        }
+
+        .header{
+            width: 78vw;
+            height: 5vh;
+            border: 1px solid black;
+            margin-top: 2px;
+        }
+
+        .left-nav ul li{
+            display: block;
+            background: gold;
+            text-align: center;
+            padding: 10px;
+            font-size: x-large;
+            font-weight: bolder;
+        }
+
+
+        .right-nav ul li{
+            display: block;
+            background: gold;
+            text-align: center;
+            padding: 10px;
+            font-size: x-large;
+            font-weight: bolder;
+        }
+
+        .left-nav ul li a {
+            text-decoration: none;
+        }
+
+        .right-nav ul li a {
+            text-decoration: none;
+        }
+
+        .right-nav ul li:hover{
+            background: rgb(157, 226, 157);
+        }
+
+        .left-nav ul li:hover{
+            background: rgb(157, 226, 157);
+        }
+
+        .content{
+            width: 80vw;
+            height: 99vh;
+            border: 1px solid black;
+            margin-top: 1px;
+            padding-left: 5px;
+            padding-right: 5px;
+        
+        }
+        table{
+            border-collapse: collapse;
+        }
+
+        .product{
+            margin-top: 5px;
+            width: 37vw;
+            height: 90vh;
+            align-content: center;
+            margin-left: 20px;
+        }
+
+        .products{
+            width: 78vw;
+            height: 93vh;
+            border: 1px solid black;
+            margin-top: 3px;
+            display: flex;
+            flex-wrap: wrap;
+            overflow-y: scroll;
+        
+            
+        }
+        
+        table{
+            text-align: center;
+            width: 100%;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="main-body">
+      
+        <div class="left-nav">
+            <ul>
+                <li><a href="">Home</a></li>
+                <li><a href="">Forum</a></li>
+                <li><a href="">Tools</a></li>
+                <li><a href="">Products</a></li>
+                <li><a href="">Trends</a></li>
+                <li><a href="">Bests</a></li>
+                <li><a href="">Home</a></li>
+            </ul>
+        </div>
+
+        <div class="content">
+<div class="header">
+    <h1>Kilimo Forum</h1>
+</div>
+
+<div class="products">
+
+<?php foreach($fetcheProducts as $row): ?>
+
+    <div class="product">
+<center><table border="1px solid black">
+    <tr>
+        <td colspan="2">Picture/Video</td>
+    </tr>
+
+    <tr>
+        <td colspan="2">  <strong><?php echo $row['product_name'] ?></strong></td>
+    </tr>
+
+    <tr>
+        <td colspan="2"><?php echo $row['description'] ?></td>
+    </tr>
+
+    <tr>
+        <td colspan="2"> <?php echo $row['price'] ?></td>
+    </tr>
+
+    <tr>
+    <td><a href="chat_with_farmer_seller.php?seller_id=<?php echo $row['user_id'] ?>&product_id=<?php echo $row['product_id'] ?>">Chat With Seller</a></td>
+    <td><button class="button-visible" onclick="showCommentBox('<?php echo $row['product_id'] ?>')">Comment</button></td>
+       
+    </tr>
+
+    <tr>
+    <td><a href="purchase_from_farmer.php">Purchase</a></td>
+        <td>Share</td>
+    </tr>
+
+    <tr>
+    <form id="commentForm_<?php echo $row['product_id']; ?>" action="commenting_from_user.php" method="POST">
+            <td>
+                <textarea id="comment_<?php echo $row['product_id'] ?>" name="comment_content"></textarea>
+                <button type="button" id="button_<?php echo $row['product_id']; ?>" class="comment-button" onclick="postComment('<?php echo $row['product_id'] ?>')">Post</button>
+                <button type="button" id="close_<?php echo $row['product_id']; ?>" class="close-button" onclick="closeCommentBox('<?php echo $row['product_id'] ?>')">Close</button>
+                <input type="hidden" name="farmer_seller_id" value="<?php echo $row['user_id'] ?>">
+                <input type="hidden" name="product_id" value="<?php echo $row['product_id'] ?>">
+             <input type="hidden" name="user_id" value="<?php echo $_SESSION['user_id'] ?>">
+            </td>
+            </form> 
+    </tr>
+
+    <tr>
+            <td class="comment-box" id="comment-box_<?php echo $row['product_id'] ?>">
+                <div class="comment-container" id="comments_<?php echo $row['product_id'] ?>">
+                    <div>No comments yet.</div>
+                </div>
+            </td>
+        </tr>
+</table></center>
+</div>
+
+<?php endforeach; ?>
+
+
+        </div>
+    </div>
+
+        <div class="right-nav">
+            <ul>
+                <li><a href="">Profile</a></li>
+                <li><a href="">Forum</a></li>
+                <li><a href="">Tools</a></li>
+                <li><a href="">Products</a></li>
+                <li><a href="">Trends</a></li>
+                <li><a href="">Bests</a></li>
+                <li><a href="logout.php">Logout</a></li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

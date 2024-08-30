@@ -1,0 +1,354 @@
+<?php
+session_start();
+
+//database connection
+include("db_connection.php");
+
+//fetching real role for the seller / farmer
+if ($_SERVER["REQUEST_METHOD"] == "GET"){
+    $seller_farmer_id = $_GET['seller_id'];
+
+$get_role = "SELECT role from users WHERE user_id = $seller_farmer_id;";
+$get_role_result = $conn->query($get_role);
+
+if(!$get_role_result){
+    echo "Error: $conn->error";
+    echo "<br> There was an error with retrieving the seller/farmer role from the database";
+} 
+
+$fetched_seller_role = $get_role_result->fetch_assoc();
+$fetched_role = $fetched_seller_role['role'];
+
+}
+
+
+if ($_SERVER["REQUEST_METHOD"] == "GET"){
+//retrieving the user id, seller id, product_id
+$user_id = $_SESSION['user_id'];
+$seller_id = $_GET['seller_id'];
+$product_id = $_GET['product_id'];
+}
+
+//varialbes declaration
+$errormsg = "";
+$success = "";
+
+
+if ($_SERVER["REQUEST_METHOD"] == "POST"){
+
+    $message = $_POST['message'];
+    $seller_id = $_POST['seller_id'];
+    $product_id = $_POST['product_id'];
+    $new_user_id = $_POST['user_id'];
+    $role = "customer";
+
+    $_SESSION['seller_id'] = $seller_id;
+    $_SESSION['product_id'] = $product_id;
+    $_SESSION['new_user_id'] = $new_user_id;
+
+    $new_seller_id = $_SESSION['seller_id'];
+    $new_product_id = $_SESSION['product_id'];
+    $new_user_id = $_SESSION['new_user_id'];
+
+
+    $Send = "INSERT INTO messages(message_content,user_id, seller_farmer_id, product_id, role )
+            VALUES('$message', '$new_user_id', '$new_seller_id', '$new_product_id', '$role');";
+
+$result = $conn->query($Send);
+//ensuring query execution 
+if(!$result){
+    echo "Error: $conn->error";
+    $errormsg = "Message not Sent, Please try again later";
+} else {
+    $success = "Sent";
+}
+}
+
+
+//fetching seller/farmer role if method is POST
+if ($_SERVER["REQUEST_METHOD"] == "POST"){
+    $get_role = "SELECT role from users WHERE user_id = $new_seller_id;";
+    $get_role_result = $conn->query($get_role);
+    
+    if(!$get_role_result){
+        echo "Error: $conn->error";
+        echo "<br> There was an error with retrieving the seller/farmer role from the database";
+    } 
+    
+    $fetched_seller_role = $get_role_result->fetch_assoc();
+    $fetched_role = $fetched_seller_role['role'];
+    
+    }
+    
+
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Messaging</title>
+    <style>
+        .main-container{
+            border: 1px solid black;
+            width: 620px;
+            height: 600px;       
+            align-content: center;
+        }
+        h1{
+            text-align: center;
+        }
+
+        .right{
+            border: 1px solid black;
+            width: 280px;
+            height: 580px;
+            float: right;
+            margin-right: 10px;
+            align-items: center;
+        }
+        .left{
+            border: 1px solid black;
+            width: 280px;
+            height: 580px;
+            float: left;
+            margin-left: 10px;
+        }
+        .new-message{
+            width: 270px;
+            border: 1px solid black;
+            height: auto;
+            align-content: center;
+            margin-top: 8px;cd
+        }
+        .error-message{
+            color: red;
+            text-align: center;
+        }
+        .success-message{
+            color: green;
+            text-align: center;
+        }
+        .my-messages{
+            width: 270px;
+            border: 1px solid black;
+            height: 515px;
+            margin-top: 5px;
+        }
+        a{
+            margin-right: 3px;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Conversation with <?php echo $fetched_role  ?></h1>
+    <p class="success-message"><?php echo $success ?></p>
+    <p class="error-message"><?php echo $errormsg ?></p>
+<center><div class="main-container">
+    <div class="left">
+        <?php
+    if ($_SERVER["REQUEST_METHOD"] == "GET"){
+    $seller_farmer_message = "SELECT * from messages WHERE seller_farmer_id = '".$seller_farmer_id."' AND user_id = '".$user_id."' AND product_id = '".$product_id."' 
+                                AND role = '".$fetched_role."' ";
+    $seller_farmer_message_result = $conn->query($seller_farmer_message);
+
+    if(!$seller_farmer_message_result){
+        echo "Error: $conn->error";
+        echo "<br> There was an error with fetching the seller/farmer messages";
+    }
+
+    $fetched_seller_farmer_messages = array();
+    while($seller_farmer_row = $seller_farmer_message_result->fetch_assoc()){
+        $fetched_seller_farmer_messages[] = $seller_farmer_row;
+    }
+
+    echo "<table>";
+    foreach($fetched_seller_farmer_messages as $seller_farmer_row){
+        echo "<tr>";
+        echo"<td>";
+        echo $seller_farmer_row['message_content'];
+        echo "</td>";
+        echo"<td>";
+        echo $seller_farmer_row['timestamp'];
+        echo "</td>";
+        echo "</tr>";
+        echo "<tr>";
+        echo"<td>";
+        echo "</td>";
+        echo"<td>";
+        echo "<a href = '#'>";
+        echo "Reply";
+        echo "</a>";
+        echo "<a href = '#'>";
+        echo "Edit";
+        echo "</a>";
+        echo "</td>";
+        echo "</tr>";
+    }
+    echo "</table>";
+    }
+
+    //seller/farmer messages if the method is post
+    if ($_SERVER["REQUEST_METHOD"] == "POST"){
+        $seller_farmer_message = "SELECT * from messages WHERE seller_farmer_id = '".$new_seller_id."' AND user_id = '".$new_user_id."' AND product_id = '".$new_product_id."' 
+                                    AND role = '".$fetched_role."' ";
+        $seller_farmer_message_result = $conn->query($seller_farmer_message);
+    
+        if(!$seller_farmer_message_result){
+            echo "Error: $conn->error";
+            echo "<br> There was an error with fetching the seller/farmer messages";
+        }
+    
+        $fetched_seller_farmer_messages = array();
+        while($seller_farmer_row = $seller_farmer_message_result->fetch_assoc()){
+            $fetched_seller_farmer_messages[] = $seller_farmer_row;
+        }
+    
+        echo "<table>";
+        foreach($fetched_seller_farmer_messages as $seller_farmer_row){
+            echo "<tr>";
+            echo"<td>";
+            echo $seller_farmer_row['message_content'];
+            echo "</td>";
+            echo"<td>";
+            echo $seller_farmer_row['timestamp'];
+            echo "</td>";
+            echo "</tr>";
+            echo "<tr>";
+            echo"<td>";
+            echo "</td>";
+            echo"<td>";
+            echo "<a href = '#'>";
+            echo "Reply";
+            echo "</a>";
+            echo "<a href = '#'>";
+            echo "Edit";
+            echo "</a>";
+            echo "</td>";
+            echo "</tr>";
+        }
+        echo "</table>";
+        }
+
+?>
+    </div>
+
+
+    <div class="right">
+        <div class="write-message">
+        <form action="chat_with_farmer_seller.php" method="post">  
+            <input type="hidden" name ="seller_id" value = "<?php echo $seller_id ?>">
+            <input type="hidden" name ="product_id" value = "<?php echo $product_id ?>">
+            <input type="hidden" name ="user_id" value = "<?php echo $user_id ?>">
+        <div class="my-messages">
+<?php
+
+
+if ($_SERVER["REQUEST_METHOD"] == "GET"){
+    $new_user_id = $_SESSION['new_user_id'];
+//selecting all student messages by using the user id from the table of the director
+$select = "SELECT * FROM messages WHERE user_id = $user_id AND role = 'customer'";
+$selectResult = $conn->query($select);
+
+if(!$selectResult){
+    echo "Error: $conn->error";
+    echo "There was an error with fetching the past messages please try again later";
+} elseif($selectResult->num_rows == 0){
+    $nomessage = "No Previous Messages";
+} else{
+    $fetchedMessages = array();
+    while ($row = $selectResult->fetch_assoc()){
+        $fetchedMessages[] = $row;
+    }
+
+    echo "<table>";
+    foreach($fetchedMessages as $row){
+        echo "<tr>";
+        echo"<td>";
+        echo $row['message_content'];
+        echo "</td>";
+        echo"<td>";
+        echo $row['timestamp'];
+        echo "</td>";
+        echo "</tr>";
+        echo "<tr>";
+        echo"<td>";
+        echo "</td>";
+        echo"<td>";
+        echo "<a href = '#'>";
+        echo "Reply";
+        echo "</a>";
+        echo "<a href = '#'>";
+        echo "Edit";
+        echo "</a>";
+        echo "</td>";
+        echo "</tr>";
+    }
+
+    echo "</table>";
+}
+
+
+} else {
+    if ($_SERVER["REQUEST_METHOD"] == "POST"){
+        $user_id = $_SESSION['new_user_id'];
+        //selecting all student messages by using the user id from the table of the director
+        $select = "SELECT * FROM messages WHERE user_id = $new_user_id AND role = 'customer'";
+        $selectResult = $conn->query($select);
+        
+        if(!$selectResult){
+            echo "Error: $conn->error";
+            echo "There was an error with fetching the past messages please try again later";
+        } elseif($selectResult->num_rows == 0){
+            $nomessage = "No Previous Messages";
+        } else{
+            $fetchedMessages = array();
+            while ($row = $selectResult->fetch_assoc()){
+                $fetchedMessages[] = $row;
+            }
+        
+            echo "<table>";
+            foreach($fetchedMessages as $row){
+                echo "<tr>";
+                echo"<td>";
+                echo $row['message_content'];
+                echo "</td>";
+                echo"<td>";
+                echo $row['timestamp'];
+                echo "</td>";
+                echo "</tr>";
+                echo "<tr>";
+                echo"<td>";
+                echo "</td>";
+                echo"<td>";
+                echo "<a href = '#'>";
+                echo "Reply";
+                echo "</a>";
+                echo "<a href = '#'>";
+                echo "Edit";
+                echo "</a>";
+                echo "</td>";
+                echo "</tr>";
+            }
+        
+            echo "</table>";
+        } 
+    }
+}
+?>
+
+        </div>
+
+        <div class="new-message">
+            <textarea name="message" id="message"></textarea>
+            <button type="submit">Send</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</center>
+
+</div>
+</body>
+</html>
+

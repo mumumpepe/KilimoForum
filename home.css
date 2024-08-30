@@ -1,0 +1,157 @@
+/* Global Styles */
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    background-color: #f4f4f9;
+    color: #333;
+}
+
+h1 {
+    text-align: center;
+    color: #2d572c;
+    margin-top: 10px;
+    font-size: 2.5em;
+}
+
+a {
+    text-decoration: none;
+    color: #2d572c;
+}
+
+a:hover {
+    color: #1a4314;
+}
+
+/* Main Container */
+.main-body {
+    border: none;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    padding: 0 20px;
+    flex-direction: column;
+}
+
+/* Navigation Menus */
+.left-nav,
+.right-nav {
+    width: 100%;
+    height: auto;
+    margin-top: 10px;
+    background-color: #eff7ee;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+}
+
+.left-nav ul,
+.right-nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.left-nav ul li,
+.right-nav ul li {
+    background: #6fbf73;
+    text-align: center;
+    padding: 15px;
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.left-nav ul li:hover,
+.right-nav ul li:hover {
+    background: #499c4a;
+}
+
+/* Content Section */
+.content {
+    width: 100%;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+/* Products Section */
+.products {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.product {
+    background-color: #fff;
+    border-radius: 10px;
+    width: 100%;
+    padding: 20px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.product:hover {
+    transform: scale(1.02);
+}
+
+.product table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.product table tr {
+    border-bottom: 1px solid #ddd;
+}
+
+.product table tr:last-child {
+    border-bottom: none;
+}
+
+.product table td {
+    padding: 10px;
+    vertical-align: top; /* Ensure the content is aligned to the top */
+}
+
+.product table td:first-child img,
+.product table td:first-child video {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+/* Responsive Styles */
+@media (min-width: 768px) {
+    .main-body {
+        flex-direction: row;
+    }
+
+    .left-nav,
+    .right-nav {
+        width: 15vw;
+        height: 80vh;
+        margin-top: 10vh;
+        padding: 20px;
+    }
+
+    .content {
+        width: 70vw;
+    }
+}
+
+@media (max-width: 767px) {
+    .product {
+        width: 100%;
+    }
+
+    .product img,
+    .product video {
+        width: 100%;
+    }
+}
